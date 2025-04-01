@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <title>PATEL Weather App</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide-icons"></script>
+  <style>
+    /* Custom CSS styles */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%23003F7C'/%3E%3C/path%3E%3C/svg%3E");
+      animation: wave 3s linear infinite;
+    }
+
+    .wave:nth-of-type(2) {
+      bottom: 10px;
+      opacity: .5;
+      animation: wave 3s linear -.5s infinite;
+    }
+
+    .wave:nth-of-type(3) {
+      bottom: 20px;
+      opacity: .2;
+      animation: wave 3s linear -1s infinite;
+    }
+
+    @keyframes wave {
+      0% {
+        transform: translateX(0);
+      }
+      50% {
+        transform: translateX(-25%);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .neon-button {
+      background: rgba(30, 64, 175, 0.4);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(30, 64, 175, 0.2);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5),
+                  0 0 20px rgba(59, 130, 246, 0.3),
+                  
+                  inset 0 0 5px rgba(59, 130, 246, 0.6), /* Thin inner shadow */
+                  inset 0 0 10px rgba(59, 130, 246, 0.4); /* Light inner shadow */
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .neon-button:hover:not(:disabled) {
+      background: rgba(30, 64, 175, 0.6);
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.7),
+                  0 0 30px rgba(15, 23, 36, 0.5),
+                  inset 0 0 10px rgba(59, 130, 246, 0.7), /* Slightly stronger inner shadow on hover */
+                  inset 0 0 15px rgba(59, 130, 246, 0.5);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-4 relative overflow-hidden">
+    <!-- Wave Animation -->
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+
+    <div class="bg-white/10 backdrop-blur-lg p-8 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] border border-white/20 w-full max-w-md relative z-10">
+      <h2 class="text-3xl font-bold text-white mb-6 flex items-center justify-center gap-2">
+        <svg class="h-8 w-8 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M12 4V1M12 23V20M4.93 4.93L7.05 7.05M16.95 16.95L19.07 19.07M1 12H4M20 12H23M4.93 19.07L7.05 16.95M16.95 7.05L19.07 4.93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+       GGIT Weather App
+      </h2>
+
+      <div class="relative">
+        <input
+          type="text"
+          id="city"
+          placeholder="Enter city name"
+          class="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white placeholder-gray-300"
+          onkeypress="handleKeyPress(event)"
+        />
+        <button
+          id="getWeatherButton"
+          onclick="getWeather()"
+          class="mt-4 w-full px-6 py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed neon-button text-white"
+        >
+          Get Weather
+        </button>
+      </div>
+
+      <div id="error" class="mt-6 p-4 bg-red-500/20 backdrop-blur-sm text-red-100 rounded-xl border border-red-500/20" style="display:none;"></div>
+
+      <div id="weatherInfo" class="mt-6 bg-blue-400/10 backdrop-blur-lg p-6 rounded-xl border border-blue-400/30 space-y-4" style="display:none;">
+
+        <div id="cityName" class="text-2xl font-bold text-white mb-2"></div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex items-center gap-2 text-white">
+            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2L12 22M12 22L9 19M12 22L15 19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span id="temp" class="font-medium"></span>
+          </div>
+          
+          <div class="flex items-center gap-2 text-white">
+            <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2L12 22M12 22L9 19M12 22L15 19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span id="weatherDesc" class="font-medium capitalize"></span>
+          </div>
+          
+          <div class="flex items-center gap-2 text-white">
+            <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2L12 22M12 22L9 19M12 22L15 19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span id="humidity" class="font-medium"></span>
+          </div>
+          
+          <div class="flex items-center gap-2 text-white">
+            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2L12 22M12 22L9 19M12 22L15 19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span id="windSpeed" class="font-medium"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let loading = false;
+
+    async function getWeather() {
+      const city = document.getElementById('city').value.trim();
+      if (!city) return;
+
+      loading = true;
+      document.getElementById('getWeatherButton').disabled = true;
+      document.getElementById('error').style.display = 'none';
+      document.getElementById('weatherInfo').style.display = 'none';
+
+      const apiKey = '79a00de3ea3bc1e5e53e99eb50f3bf4a';
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById('cityName').innerText = `${data.name}, ${data.sys.country}`;
+          document.getElementById('temp').innerText = `${Math.round(data.main.temp)}°C`;
+          document.getElementById('weatherDesc').innerText = data.weather[0].description;
+          document.getElementById('humidity').innerText = `${data.main.humidity}%`;
+          document.getElementById('windSpeed').innerText = `${data.wind.speed} m/s`;
+          document.getElementById('weatherInfo').style.display = 'block';
+        } else {
+          document.getElementById('error').innerText = data.message;
+          document.getElementById('error').style.display = 'block';
+        }
+      } catch (error) {
+        document.getElementById('error').innerText = 'Network error, please try again!';
+        document.getElementById('error').style.display = 'block';
+      } finally {
+        loading = false;
+        document.getElementById('getWeatherButton').disabled = false;
+      }
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        getWeather();
+      }
+    }
+  </script>
+
+</body>
+</html>
