@@ -79,7 +79,7 @@
         <svg class="h-8 w-8 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path d="M12 4V1M12 23V20M4.93 4.93L7.05 7.05M16.95 16.95L19.07 19.07M1 12H4M20 12H23M4.93 19.07L7.05 16.95M16.95 7.05L19.07 4.93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
-       GGIT Weather App
+       Gagan Weather App
       </h2>
 
       <div class="relative">
